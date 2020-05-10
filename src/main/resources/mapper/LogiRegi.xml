@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.online_program.dao.LogiRegiMapper">
+    <!--save user msg-->
+    <insert id="regist" parameterType="com.example.online_program.entity.UserInfo" keyProperty="id">
+         insert into ide.user(name, pass, user_id) values (#{name},#{pass},#{ID})
+    </insert>
+    <!--判断用户是否已存在-->
+    <select id="isExist" parameterType="java.lang.String" resultType="java.lang.String">
+        select name from ide.user where name=#{name}
+    </select>
+    <!--login-->
+    <select id="login" parameterType="com.example.online_program.entity.UserInfo" resultType="java.lang.String">
+        select user_id from ide.user where name=#{name} and pass=#{pass}
+    </select>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.online_program.dao.CodeStorageMapper">
+    <!--adjust node is file or not-->
+    <select id="selectLabel" parameterType="java.lang.String" resultType="java.lang.String">
+        select label from treenode
+        where child_id=#{parentId}
+    </select>
+
+    <!--save code-->
+    <insert id="saveCode" parameterType="com.example.online_program.entity.CodeInfo" keyProperty="id">
+         insert into ide.code(code_id, code_text, user_id)
+         values (#{codeId},#{codeText},#{userId})
+         on duplicate key update
+         code_text= #{codeText}
+    </insert>
+
+    <!--judge code is exist or not-->
+    <select id="isExistsCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select COUNT(*) from ide.code where code_id=#{codeId}
+    </select>
+
+    <!--update code-->
+    <update id="updateCode" parameterType="com.example.online_program.entity.CodeInfo">
+        update ide.code
+        set code_text =#{codeText},
+        update_time=#{updateTime},
+        user_id=#{userId}
+        where code_id=#{codeId}
+    </update>
+
+    <!--show code-->
+    <select id="showCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select code_text from ide.code where code_id=#{codeId}
+    </select>
+
+    <!--show history code-->
+    <select id="showHistory" parameterType="java.lang.String" resultMap="getHistoryCode">
+        select * from ide.code where user_id=#{userId}
+    </select>
+    <resultMap id="getHistoryCode" type="com.example.online_program.entity.CodeInfo">
+        <result property="codeId" column="code_id"/>
+        <result property="codeText" column="code_text"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!--delete code-->
+    <delete id="deleteCode" parameterType="java.lang.String">
+        delete from ide.code where code_id=#{codeId}
+    </delete>
+
+    <!--delete muti code-->
+    <delete id="delMutiCode" parameterType="java.util.List">
+        delete from ide.code where code_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>
