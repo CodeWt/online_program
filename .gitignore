@@ -32,9 +32,9 @@
 *.log
 *.gz
 ### yaml conf
-*.yaml
-*.yml
+#*.yaml
+#*.yml
 
 
-pom.xml
+#pom.xml
 *.log
