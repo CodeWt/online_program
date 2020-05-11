@@ -17,6 +17,10 @@ import java.util.UUID;
 public class Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
+    /**
+     * @return
+     * 49777483d41644af91cfa11aaa3e94e7  32
+     */
     public static String getUUIDString() {
         return UUID
                 .randomUUID()
@@ -24,6 +28,10 @@ public class Utils {
                 .replaceAll("-", "");
     }
 
+    /**
+     * @return
+     * 2020-05-11 22:35:03.509
+     */
     public static String getTimeStamp() {
         return new Timestamp(
                 System.currentTimeMillis()
@@ -116,7 +124,7 @@ public class Utils {
 //        for (int i = 0; i < 10; i++) {
 //            LOGGER.debug(new StringBuffer(getUUIDString()).replace(0, 1, "p"));
 //        }
-//        LOGGER.debug(getTimeStamp());
+        LOGGER.debug(getTimeStamp());
     }
 }
 /*

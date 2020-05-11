@@ -76,6 +76,7 @@ public class CodeStorageController {
             codeInfo.setUserId(userId);
             codeInfo.setCodeId(codeId);
             codeInfo.setCodeText(code);
+            codeInfo.setUpdateTime(Utils.getTimeStamp());
             if (!storage.save(codeInfo)){
                 return ResultGenerator.genFailResult("save db failed");
             }

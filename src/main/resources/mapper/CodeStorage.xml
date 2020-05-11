@@ -14,7 +14,7 @@
          insert into ide.code(code_id, code_text, user_id)
          values (#{codeId},#{codeText},#{userId})
          on duplicate key update
-         code_text= #{codeText}
+         code_text= #{codeText},update_time=#{updateTime}
     </insert>
 
     <!--judge code is exist or not-->

@@ -67,7 +67,8 @@ $(function () {
     })
     //TODO mycode btn listener
     $('#codebtn').click(function () {
-        window.open("/myCode.html?userId=1111");
+        window.open("/myCode.html");
+        // window.open("/myCode.html?userId=1111");
         // window.location.href = "/myCode.html"
     })
 
