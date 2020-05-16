@@ -1,17 +1,13 @@
 package com.example.online_program.service;
 
 import com.example.online_program.constants.OnlineIde;
-import com.example.online_program.controller.CodeSearchController;
 import com.example.online_program.utils.Utils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -36,8 +32,8 @@ import java.util.Map;
  * @Date: 19-4-5
  * @Description:
  */
-public class EsOptService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EsOptService.class);
+public class SingleNodeEsService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingleNodeEsService.class);
 
     public static TransportClient client;
     static {
@@ -49,7 +45,7 @@ public class EsOptService {
             while (true) {
                 client = new PreBuiltTransportClient(Settings.EMPTY)
                         .addTransportAddress(new TransportAddress(InetAddress
-                                .getByName(OnlineIde.ES_IP), OnlineIde.ES_PORT));
+                                .getByName(OnlineIde.ES_IP), OnlineIde.ES_TCP_PORT));
                 if (client!=null){
                     break;
                 }
@@ -67,7 +63,6 @@ public class EsOptService {
     }
 
     /**
-     * @param codeId
      * @param codeText
      * @return
      * 保存数据到Es中
@@ -99,6 +94,8 @@ public class EsOptService {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }finally {
+            closeEsCli(client);
         }
         return true;
     }
@@ -156,7 +153,7 @@ public class EsOptService {
     }
 
     /**
-     * @param codeId
+     * @param codeText
      * @return
      * 存在返回结果集object
      * 不存在则返回null

@@ -21,3 +21,11 @@ lsof -i:8888
 kill -9 PID号
 
 ps：kill就是给某个进程id发送了一个信号。默认发送的信号是SIGTERM，而kill -9发送的信号是SIGKILL，即exit。exit信号不会被系统阻塞，所以kill -9能顺利杀掉进程。
+
+
+>springboot部署运行
+```aidl
+1.mvn clean package -Dmaven.test.skip=true
+2.java -jar x.jar --spring.profiles.active=xxx
+
+```

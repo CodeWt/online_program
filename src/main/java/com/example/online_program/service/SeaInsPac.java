@@ -30,7 +30,7 @@ public class SeaInsPac {
         InputStream in = null;
         try {
             if (pName != null && !pName.trim().equals("")) {
-                String[] cmds = {"/bin/sh", "-c", "pip search " + pName};
+                String[] cmds = {"/bin/sh", "-c", "pip3 search " + pName};
                 Process pro = Runtime.getRuntime().exec(cmds);
                 pro.waitFor();
                 in = pro.getInputStream();

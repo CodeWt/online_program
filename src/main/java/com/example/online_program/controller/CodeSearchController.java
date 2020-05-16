@@ -1,13 +1,12 @@
 package com.example.online_program.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.online_program.service.EsOptService;
+import com.example.online_program.service.ClusterEsService;
 import com.example.online_program.service.SeaInsPac;
 import com.example.online_program.utils.result_utils.Result;
 import com.example.online_program.utils.result_utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class CodeSearchController {
                 page = Integer.valueOf(object.getString("page"));
             }
             LOGGER.debug("page : " + page + "\tkw : " + kw + "\tnum : " + num);
-            Map data = EsOptService.queryDataFromEs(kw, page, num);
+            Map data = ClusterEsService.queryDataFromEs(kw, page, num);
             return ResultGenerator.genSuccessResult(data);
         }
         return ResultGenerator.genFailResult("search full failed");
@@ -62,7 +61,7 @@ public class CodeSearchController {
     @PostMapping(value = "/show")
     public Result searchCodeContentFromEs(@RequestBody JSONObject object){
         if ((object.getString("codeId")!=null)&&(!object.getString("codeId").trim().equals(""))){
-            String data = EsOptService.queryCodeContentByCodeId(object.getString("codeId"));
+            String data = ClusterEsService.queryCodeContentByCodeId(object.getString("codeId"));
             if (data!=null){
                 return ResultGenerator.genSuccessResult(data);
             }
