@@ -1,4 +1,4 @@
-package com.example.online_program.log;
+package com.example.online_program.utils;
 
 import org.junit.Test;
 import org.slf4j.Logger;

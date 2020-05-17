@@ -34,7 +34,7 @@ public class SearchApi {
     public void searchTest(){
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("182.92.107.205", 9200, "http")));
+                        new HttpHost("localhost", 9200, "http")));
         SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         //todo Set the from option that determines the result index to start searching from. Defaults to 0.

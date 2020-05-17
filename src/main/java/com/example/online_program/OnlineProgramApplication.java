@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import java.util.TimeZone;
 
 @MapperScan("com.example.online_program.dao")//使用MapperScan批量扫描所有的Mapper/Repository接口
 @SpringBootApplication
@@ -17,8 +18,8 @@ public class OnlineProgramApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        //解决netty冲突
-        System.setProperty("es.set.netty.runtime.available.processors", "false");
+        System.setProperty("es.set.netty.runtime.available.processors", "false");// 解决netty冲突
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8:00")); //时区设置
         SpringApplication.run(OnlineProgramApplication.class, args);
     }
 }

@@ -46,10 +46,12 @@ public class ClusterEsService {
     static {
         client = getClient();
     }
+
     public static RestHighLevelClient getClient(){
         return new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost(OnlineIde.ES_IP, OnlineIde.ES_HTTP_PORT, OnlineIde.ES_SCHEME)));
+                        new HttpHost(OnlineIde.ES_IP, OnlineIde.ES_HTTP_PORT, OnlineIde.ES_SCHEME),
+                        new HttpHost(OnlineIde.ES_IP_2, OnlineIde.ES_HTTP_PORT, OnlineIde.ES_SCHEME)));
     }
 
     public static boolean saveDataToEsCluster(String codeText){

@@ -31,7 +31,7 @@ public class IndexApi {
         //todo 获取client
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("182.92.107.205", 9200, "http")));
+                        new HttpHost("localhost", 9200, "http")));
         IndexRequest request = new IndexRequest(
                 "posts",
                 "doc",

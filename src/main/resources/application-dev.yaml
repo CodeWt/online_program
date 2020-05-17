@@ -6,6 +6,7 @@ spring:
     url: jdbc:mysql://mysql:3306/ide?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: 123456
+
   #elasticsearch config
 #  data:
 #    elasticsearch:

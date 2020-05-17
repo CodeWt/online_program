@@ -21,7 +21,7 @@ public class GetApi {
     public void getRequest() throws IOException {
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("182.92.107.205", 9200, "http")));
+                        new HttpHost("localhost", 9200, "http")));
         GetRequest getRequest = new GetRequest(
                 "posts",
                 "doc",
