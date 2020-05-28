@@ -1,0 +1,135 @@
+version: '3'
+services:
+  nginx:                      # nginx容器
+    container_name: nginx
+    build:                    # 指定上下文目录以及docker配置文件的相对路径
+      context: ./
+      dockerfile: ${DOCKERFILES_DIR}/nginx-Dockerfile
+    environment:
+    - TZ=Asia/Shanghai
+    ports:
+    - "80:80"               # 映射容器的80端口到宿主机的80端口
+    volumes:                  # 主机的文件夹映射到容器的文件夹
+    - ./nginx/logs:/var/log/nginx
+    - ./static:/opt/static
+    depends_on:
+    - server1
+    - server2
+  mysql:                      # mysql容器
+    container_name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}     # 创建库
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # 设置root用户的密码
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      TZ: Asia/Shanghai        # 设置容器的时区
+    expose:
+    - "3306"                # 容器对外（向别的容器等）暴露3306的端口
+    volumes:
+    - "${MYSQL_DIR}/data:/var/lib/mysql"           # 挂载数据目录(db数据,bin.log)
+    - "${MYSQL_DIR}/config:/etc/mysql/conf.d"      # 挂载配置文件目录 (my.conf)
+    - "${MYSQL_DIR}/init:/docker-entrypoint-initdb.d/"  #db初始化文件(init.sql)
+    restart: always            # 自动重启
+
+  server1:                     # 后端springboot容器，名字是'server1'
+    container_name: server1
+    restart: always
+    build:
+      context: ./
+      dockerfile: ${DOCKERFILES_DIR}/server-Dockerfile
+    working_dir: /app         # 设置工作目录为容器内的app文件夹
+    environment:
+    - TZ=Asia/Shanghai
+    volumes:
+    - ./online_program:/app # 将主机的online_program 文件夹(java代码)映射到容器内的app文件夹
+    - ~/.m2:/root/.m2       # 映射主机和容器的maven
+    - ./logs/log1:/app/log      # 映射容器产生的日志到主机的log1文件夹
+    expose:
+    - "8080"                # 暴露端口
+    command: mvn clean spring-boot:run '-Dmaven.test.skip=true' # server容器创建后执行的命令
+    depends_on:               # 依赖于mysql，被依赖容器启动后server容器才启动
+    - mysql
+
+  server2:                     # 后端springboot容器，名字是'server2'
+    container_name: server2
+    restart: always
+    build:
+      context: ./
+      dockerfile: ${DOCKERFILES_DIR}/server-Dockerfile
+    working_dir: /app         # 设置工作目录为容器内的app文件夹
+    environment:
+    - TZ=Asia/Shanghai
+    volumes:
+    - ./online_program2:/app # 将主机的online_program 文件夹(java代码)映射到容器内的app文件夹
+    - ~/.m2:/root/.m2       # 映射主机和容器的maven
+    - ./logs/log2:/app/log      # 映射容器产生的日志到主机的log2文件夹
+    expose:
+    - "8081"                # 向其他容器暴露端口
+    command: mvn clean spring-boot:run '-Dmaven.test.skip=true'  # server2容器创建后执行的命令
+    depends_on:               # 依赖于mysql，被依赖容器启动后server2容器才启动
+    - mysql
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+    container_name: elasticsearch
+    environment:
+    - cluster.name=docker-cluster
+    - node.name=elasticsearch
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Xlog:disable -Xlog:all=warning:stderr:utctime,level,tags -Xlog:gc=debug:stderr:utctime"
+    - node.master=true
+    - node.data=true
+    - "discovery.zen.ping.unicast.hosts=elasticsearch2"
+    - TZ=Asia/Shanghai
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+    - ./esdata1:/usr/share/elasticsearch/data
+    - ./logs/eslog1:/usr/share/elasticsearch/logs
+    expose:
+    - 9200
+    #ports:
+    #- 9200:9200
+    #- 9300:9300
+
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+    container_name: elasticsearch2
+    environment:
+    - cluster.name=docker-cluster
+    - node.name=elasticsearch2
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Xlog:disable -Xlog:all=warning:stderr:utctime,level,tags -Xlog:gc=debug:stderr:utctime"
+    - "discovery.zen.ping.unicast.hosts=elasticsearch" #discovery other node
+    - node.master=true
+    - node.data=true
+    - TZ=Asia/Shanghai
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+    - ./esdata2:/usr/share/elasticsearch/data
+    - ./logs/eslog2:/usr/share/elasticsearch/logs
+    expose:
+    - 9200
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.5.4
+    container_name: kibana-6.5.4
+    environment:
+    - elasticsearch.hosts=http://elasticsearch:9200
+    - TZ=Asia/Shanghai
+    depends_on:
+    - elasticsearch
+    - elasticsearch2
+    restart: always
+    ports:
+    - "5601:5601"
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local

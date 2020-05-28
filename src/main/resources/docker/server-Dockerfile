@@ -1,0 +1,12 @@
+# 使用安装了jdk8和maven3.54的linxu环境
+FROM maven:3.5.4-jdk-8
+# 设置维护者信息
+MAINTAINER wtt "407191993@qq.com"
+# 设置环境编码UTF-8
+ENV LANG C.UTF-8
+RUN mv /etc/apt/sources.list /etc/apt/sources.list-old
+ADD ./sources.list /etc/apt/
+RUN apt-get update
+RUN apt-get install -y python3 --allow-unauthenticated
+RUN apt-get install -y python3-pip --allow-unauthenticated
+

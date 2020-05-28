@@ -12,4 +12,11 @@
 ```aidl
 目前支持语言为pyhton
 ```
- 
+>tech 
+```aidl
+springboot + mysql + es + kibana + easyui + jquery
+``` 
+>deploy
+```aidl
+docker-compose.yaml
+```

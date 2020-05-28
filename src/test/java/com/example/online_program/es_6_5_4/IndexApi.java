@@ -77,7 +77,7 @@ public class IndexApi {
     public void AsyIndexRequest() throws IOException, InterruptedException {
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("182.92.107.205", 9200, "http")));
+                        new HttpHost("localhost", 9200, "http")));
         //todo 提供source的第二种方式
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("user", "kimchy");
