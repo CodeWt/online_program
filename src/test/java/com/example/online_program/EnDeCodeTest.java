@@ -1,4 +1,4 @@
-package com.example.online_program.utils;
+package com.example.online_program;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -9,7 +9,7 @@ import org.junit.Test;
  * @Date: 20-5-8
  * @Description:
  */
-public class EnDeCode {
+public class EnDeCodeTest {
     @Test
     public void MD5Gen(){
         System.out.println("md5 val : "+DigestUtils.md5Hex("123456"));

@@ -3,19 +3,11 @@ spring:
     static-locations: classpath:/static/,classpath:/templates/
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql:3306/ide?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://182.92.107.205:3306/ide?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: 123456
 
-  #elasticsearch config
-#  data:
-#    elasticsearch:
-#      cluster-name: es
-#      cluster-nodes: 127.0.0.1:9300
-#      repositories:
-#        enabled: true
-
-#mybatis config
+# mybatis config
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.example.online_program.entity
@@ -37,5 +29,25 @@ logging:
     root: info
     com.example.online_program: debug
 
+  #elasticsearch config
+elasticsearch:
+    node1:
+      host: 182.92.107.205
+      port: 9200
+      scheme: http
+    node2:
+      host: 182.92.107.205
+      port: 9201
+      scheme: http
+    index: ide_code_index
+    table: ide_code_table
+#default port : ssh=22，ftp=21
+sftp:
+  client:
+    host: 182.92.107.205
+    port: 22
+    userName: root
+    passWord: j1535284.
+    desDirPath: /pydir/
 
 

@@ -12,7 +12,6 @@ import java.util.TimeZone;
 @EnableTransactionManagement
 public class OnlineProgramApplication extends SpringBootServletInitializer {
 
-
     protected SpringApplicationBuilder builder() {
         return builder().sources(OnlineProgramApplication.class);
     }

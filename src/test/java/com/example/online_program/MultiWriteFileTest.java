@@ -1,4 +1,4 @@
-package com.example.online_program.utils;
+package com.example.online_program;
 
 import com.example.online_program.service.CodeStorage;
 import com.example.online_program.service.impl.CodeStorageImpl;
@@ -18,13 +18,13 @@ import java.util.Arrays;
  * @Date: 20-5-8
  * @Description:
  */
-public class MultiWriteFile {
+public class MultiWriteFileTest {
     static String fileName = "/home/wtt/IdeaProjects/" +
             "online_program/src/test/java/com/" +
             "example/online_program/utils/t.txt";
     @Test
     public void writeFileWithBufferWriter() throws IOException {
-        Method[] methods = MultiWriteFile.class.getDeclaredMethods();
+        Method[] methods = MultiWriteFileTest.class.getDeclaredMethods();
         System.out.println("methods : "+methods);
         String str = Arrays.toString(methods);
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName,true));
@@ -77,7 +77,7 @@ public class MultiWriteFile {
         RandomAccessFile stream = new RandomAccessFile(fileName,"rw");
         FileChannel channel = stream.getChannel();
 
-        String val = MultiWriteFile.class.getSimpleName();
+        String val = MultiWriteFileTest.class.getSimpleName();
         byte[] bytes = val.getBytes();
         ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
         buffer.put(bytes);

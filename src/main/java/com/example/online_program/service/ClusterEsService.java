@@ -1,6 +1,7 @@
 package com.example.online_program.service;
 
-import com.example.online_program.constants.OnlineIde;
+import com.example.online_program.config.EsClusterConfig;
+import com.example.online_program.config.OnlineIde;
 import com.example.online_program.utils.Utils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpHost;
@@ -28,6 +29,9 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,29 +44,30 @@ import java.util.Map;
  * @Date: 20-5-16
  * @Description:
  */
+@Service
 public class ClusterEsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusterEsService.class);
-    private static RestHighLevelClient client;
-    static {
-        client = getClient();
-    }
 
-    public static RestHighLevelClient getClient(){
+    @Autowired
+    private EsClusterConfig config;
+
+    public RestHighLevelClient getClient(){
         return new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost(OnlineIde.ES_IP, OnlineIde.ES_HTTP_PORT, OnlineIde.ES_SCHEME),
-                        new HttpHost(OnlineIde.ES_IP_2, OnlineIde.ES_HTTP_PORT, OnlineIde.ES_SCHEME)));
+                        new HttpHost(config.getHost_1(), config.getPort_1(), config.getScheme_1()),
+                        new HttpHost(config.getHost_2(), config.getPort_2(), config.getScheme_2())
+                )
+        );
     }
-
-    public static boolean saveDataToEsCluster(String codeText){
+    public boolean saveDataToEsCluster(String codeText){
         String sha1 = DigestUtils.sha1Hex(codeText);
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("codeId", sha1);
         jsonMap.put("codeText", codeText);
-        IndexRequest request = new IndexRequest(OnlineIde.ES_INDEX, OnlineIde.ES_TABLE, sha1).source(jsonMap);
+        IndexRequest request = new IndexRequest(config.getIndex(), config.getTable(), sha1).source(jsonMap);
         IndexResponse indexResponse = null;
         try {
-            indexResponse = client.index(request, RequestOptions.DEFAULT);
+            indexResponse = this.getClient().index(request, RequestOptions.DEFAULT);
             String index = indexResponse.getIndex();
             String type = indexResponse.getType();
             String id = indexResponse.getId();
@@ -86,20 +91,19 @@ public class ClusterEsService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            closeEsCli(client);
             return false;
         }
         return true;
     }
 
-    public static String queryCodeContentByCodeId(String codeId){
+    public String queryCodeContentByCodeId(String codeId){
         GetRequest request = new GetRequest(
-                OnlineIde.ES_INDEX,
-                OnlineIde.ES_TABLE,
+                config.getIndex(),
+                config.getTable(),
                 codeId);
         GetResponse getResponse = null;
         try {
-            getResponse = client.get(request, RequestOptions.DEFAULT);
+            getResponse = this.getClient().get(request, RequestOptions.DEFAULT);
             LOGGER.debug(getResponse.getIndex()+"\t"+getResponse.getType()+"\t"+getResponse.getId());
             if (getResponse.isExists()) {
                 Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
@@ -109,11 +113,10 @@ public class ClusterEsService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            closeEsCli(client);
         }
         return null;
     }
-    public static Map queryDataFromEs(String keyWord, int page, int num){
+    public Map queryDataFromEs(String keyWord, int page, int num){
         Map result = new HashMap();
         SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -137,7 +140,7 @@ public class ClusterEsService {
         //todo Add the SearchSourceBuilder to the SeachRequest.
         searchRequest.source(searchSourceBuilder);
         try {
-            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            SearchResponse searchResponse = this.getClient().search(searchRequest, RequestOptions.DEFAULT);
             RestStatus status = searchResponse.status();
             LOGGER.debug("status : "+status.getStatus());
             LOGGER.debug("totalShards : "+searchResponse.getTotalShards());
@@ -179,11 +182,10 @@ public class ClusterEsService {
             result.put("list",list);
         } catch (IOException e) {
             e.printStackTrace();
-            closeEsCli(client);
         }
         return result;
     }
-    public static void closeEsCli(RestHighLevelClient client) {
+    public void closeEsCli(RestHighLevelClient client) {
         if (client != null) {
             try {
                 client.close();
@@ -191,14 +193,5 @@ public class ClusterEsService {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args) {
-        saveDataToEsCluster("trying out Elasticsearch");
-        saveDataToEsCluster("trying out high rest client save Elasticsearch");
-        saveDataToEsCluster("The SearchRequest is used for any operation that has to do with " +
-                "searching documents, aggregations, suggestions and also Elasticsearch offers ways of requesting highlighting on the resulting documents.");
-        LOGGER.debug("===============");
-//        LOGGER.debug(queryCodeContentByCodeId("3861e582e01c20e3cdcfd54a10f0b15272c43ad3"));
     }
 }

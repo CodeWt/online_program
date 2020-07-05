@@ -7,6 +7,7 @@ import com.example.online_program.utils.result_utils.Result;
 import com.example.online_program.utils.result_utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,10 @@ import java.util.Map;
 public class CodeSearchController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(CodeSearchController.class);
+
+    @Autowired
+    private ClusterEsService esService;
+
     /**
      * TODO fullTextSearchCode
      * kw 为搜索关键字,
@@ -47,7 +52,7 @@ public class CodeSearchController {
                 page = Integer.valueOf(object.getString("page"));
             }
             LOGGER.debug("page : " + page + "\tkw : " + kw + "\tnum : " + num);
-            Map data = ClusterEsService.queryDataFromEs(kw, page, num);
+            Map data = esService.queryDataFromEs(kw, page, num);
             return ResultGenerator.genSuccessResult(data);
         }
         return ResultGenerator.genFailResult("search full failed");
@@ -61,7 +66,7 @@ public class CodeSearchController {
     @PostMapping(value = "/show")
     public Result searchCodeContentFromEs(@RequestBody JSONObject object){
         if ((object.getString("codeId")!=null)&&(!object.getString("codeId").trim().equals(""))){
-            String data = ClusterEsService.queryCodeContentByCodeId(object.getString("codeId"));
+            String data = esService.queryCodeContentByCodeId(object.getString("codeId"));
             if (data!=null){
                 return ResultGenerator.genSuccessResult(data);
             }

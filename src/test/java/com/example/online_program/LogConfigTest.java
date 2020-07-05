@@ -1,4 +1,4 @@
-package com.example.online_program.utils;
+package com.example.online_program;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
  * @Description:
  */
 @Configuration
-public class LogConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogConfig.class);
+public class LogConfigTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogConfigTest.class);
     @Test
     @Bean
     public void disLog(){

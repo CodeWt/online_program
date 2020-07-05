@@ -2,8 +2,8 @@ package com.example.online_program.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.online_program.entity.CodeInfo;
-import com.example.online_program.service.CodeStorage;
 import com.example.online_program.service.ClusterEsService;
+import com.example.online_program.service.CodeStorage;
 import com.example.online_program.utils.Utils;
 import com.example.online_program.utils.result_utils.Result;
 import com.example.online_program.utils.result_utils.ResultGenerator;
@@ -30,6 +30,8 @@ public class CodeStorageController {
     
     @Autowired
     private CodeStorage storage;
+    @Autowired
+    private ClusterEsService esService;
     /**
      * TODO save code to DB
      *
@@ -80,7 +82,7 @@ public class CodeStorageController {
             if (!storage.save(codeInfo)){
                 return ResultGenerator.genFailResult("save db failed");
             }
-            if (!ClusterEsService.saveDataToEsCluster(code)){
+            if (!esService.saveDataToEsCluster(code)){
                 return ResultGenerator.genFailResult("[save es failed]");
             }
             return ResultGenerator.genSuccessResult();
