@@ -3,7 +3,7 @@ services:
   nginx:                      # nginx容器
     container_name: nginx
     build:                    # 指定上下文目录以及docker配置文件的相对路径
-      context: ./
+      context: ""
       dockerfile: ${DOCKERFILES_DIR}/nginx-Dockerfile
     environment:
     - TZ=Asia/Shanghai
@@ -35,7 +35,7 @@ services:
     container_name: server1
     restart: always
     build:
-      context: ./
+      context: ""
       dockerfile: ${DOCKERFILES_DIR}/server-Dockerfile
     working_dir: /app         # 设置工作目录为容器内的app文件夹
     environment:
@@ -54,7 +54,7 @@ services:
     container_name: server2
     restart: always
     build:
-      context: ./
+      context: ""
       dockerfile: ${DOCKERFILES_DIR}/server-Dockerfile
     working_dir: /app         # 设置工作目录为容器内的app文件夹
     environment:
